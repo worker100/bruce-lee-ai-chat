@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>李小龙 AI 对话助手</title>
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- 如果使用 config.local.js，取消下面这行的注释 -->
+    <script src="config/config.local.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧边栏 -->
+        <div class="sidebar" id="sidebar">
+            <!-- 侧边栏头部 -->
+            <div class="sidebar-header">
+                <div class="logo">
+                    <h2>🥋 Bruce AI</h2>
+                </div>
+                <button class="btn-new-chat" onclick="createNewChat()" title="新建对话">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span>新建对话</span>
+                </button>
+            </div>
+
+            <!-- 对话列表 -->
+            <div class="chat-list" id="chatList">
+                <!-- 对话项将通过 JS 动态生成 -->
+            </div>
+
+            <!-- 侧边栏底部 -->
+            <div class="sidebar-footer">
+                <div style="text-align: center; color: #9ca3af; font-size: 12px; opacity: 0.7;">
+                    Bruce Lee AI Assistant
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区域 -->
+        <div class="main-content">
+        <!-- API 配置面板（隐藏） -->
+        <div class="config-panel" id="configPanel" style="display: none;">
+            <h3>⚙️ 配置</h3>
+            <div class="config-content">
+                <div class="form-group">
+                    <label for="apiKey">API Key:</label>
+                    <input type="password" id="apiKey" placeholder="输入你的火山方舟 API Key">
+                </div>
+                <div class="form-group">
+                    <label for="endpointId">Endpoint ID:</label>
+                    <input type="text" id="endpointId" placeholder="输入你的模型 Endpoint ID">
+                </div>
+                <button class="btn btn-primary" onclick="saveConfig()">保存配置</button>
+                <button class="btn btn-secondary" onclick="toggleConfig()">关闭</button>
+            </div>
+        </div>
+
+            <!-- 聊天头部 -->
+            <div class="chat-header">
+                <h1 id="chatTitle">欢迎使用 Bruce AI</h1>
+                <div class="chat-header-actions">
+                    <button class="btn-icon" onclick="toggleTheme()" id="themeToggleBtn" title="切换主题">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" id="themeIcon">
+                            <!-- 图标将通过 JavaScript 动态设置 -->
+                        </svg>
+                    </button>
+                    <button class="btn-icon" onclick="toggleSidebar()" title="切换侧边栏">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 聊天区域 -->
+            <div class="chat-container">
+                <!-- 空白状态（无消息时显示） -->
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-content">
+                        <h1 class="empty-state-greeting" id="emptyGreeting">下午好，Bruce</h1>
+                    </div>
+                </div>
+
+                <!-- 消息区域（有消息时显示） -->
+                <div class="chat-messages" id="chatMessages" style="display: none;">
+                    <!-- 消息将通过 JS 动态生成 -->
+                </div>
+
+                <!-- 输入区域 -->
+                <div class="chat-input-area">
+                    <div class="input-container">
+                        <button class="btn-voice" onclick="toggleVoiceInput()" id="voiceBtn" title="语音输入">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" id="voiceIcon">
+                                <path d="M12 1C10.3431 1 9 2.34315 9 4V12C9 13.6569 10.3431 15 12 15C13.6569 15 15 13.6569 15 12V4C15 2.34315 13.6569 1 12 1Z" stroke="currentColor" stroke-width="2"/>
+                                <path d="M19 10V12C19 15.866 15.866 19 12 19M5 10V12C5 15.866 8.13401 19 12 19M12 19V23M8 23H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                        <textarea
+                            id="userInput"
+                            placeholder="有什么想问的？"
+                            rows="1"
+                            onkeydown="handleKeyPress(event)"
+                        ></textarea>
+                        <button class="btn-send" onclick="sendMessage()" id="sendBtn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="search-toggle-container">
+                        <button class="btn-search-toggle" onclick="toggleSearch()" id="searchToggleBtn" title="联网搜索">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" id="searchIcon">
+                                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                                <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <span id="searchToggleText">联网搜索</span>
+                        </button>
+                        <button class="btn btn-small" onclick="clearCurrentChat()">🗑️ 清空当前对话</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载配置 -->
+    <script src="config/config.local.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

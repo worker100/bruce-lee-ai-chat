@@ -1,0 +1,22 @@
+{
+  "name": "bruce-lee-ai-chat",
+  "version": "1.0.0",
+  "description": "李小龙 AI 对话助手 - Be Water, My Friend",
+  "main": "src/index.html",
+  "scripts": {
+    "start": "npx serve src -p 3000",
+    "dev": "npx serve src -p 3000"
+  },
+  "keywords": [
+    "ai",
+    "chatbot",
+    "bruce-lee",
+    "volcengine"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/bruce-lee-ai-chat.git"
+  }
+}

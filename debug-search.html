@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索功能测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-container { max-width: 800px; margin: 0 auto; }
+        .test-button { 
+            background: #6366f1; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            margin: 10px 5px;
+        }
+        .test-button:hover { background: #4f46e5; }
+        .result { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 搜索功能测试</h1>
+        
+        <h2>测试1: 基本搜索按钮</h2>
+        <button class="test-button" onclick="testBasicSearch()">测试基本搜索按钮</button>
+        <div id="test1-result" class="result"></div>
+        
+        <h2>测试2: 模拟搜索结果</h2>
+        <button class="test-button" onclick="testSearchResults()">测试搜索结果渲染</button>
+        <div id="test2-result" class="result"></div>
+        
+        <h2>测试3: 切换功能</h2>
+        <button class="test-button" onclick="testToggleFunction()">测试切换功能</button>
+        <div id="test3-result" class="result"></div>
+    </div>
+
+    <script>
+        // 模拟搜索结果数据
+        const mockSearchResults = [
+            {
+                title: "测试文章1 - AI技术发展",
+                url: "https://example.com/article1",
+                snippet: "这是一篇关于AI技术发展的测试文章，包含了最新的技术趋势和应用案例..."
+            },
+            {
+                title: "测试文章2 - 机器学习应用",
+                url: "https://example.com/article2", 
+                snippet: "机器学习在各个领域的应用越来越广泛，从医疗到金融都有重要突破..."
+            },
+            {
+                title: "测试文章3 - 深度学习研究",
+                url: "https://example.com/article3",
+                snippet: "深度学习技术正在推动人工智能的快速发展，新的算法和模型不断涌现..."
+            }
+        ];
+
+        // 测试1: 基本搜索按钮
+        function testBasicSearch() {
+            const result = document.getElementById('test1-result');
+            result.innerHTML = `
+                <h3>✅ 基本搜索按钮测试</h3>
+                <p>正在测试搜索按钮的HTML生成...</p>
+                <div id="search-test-container"></div>
+            `;
+            
+            // 生成搜索按钮HTML
+            const searchHtml = renderSearchSources(mockSearchResults, 'test-1');
+            document.getElementById('search-test-container').innerHTML = searchHtml;
+        }
+
+        // 测试2: 搜索结果渲染
+        function testSearchResults() {
+            const result = document.getElementById('test2-result');
+            result.innerHTML = `
+                <h3>✅ 搜索结果渲染测试</h3>
+                <p>测试搜索结果的完整渲染...</p>
+                <div id="search-results-container"></div>
+            `;
+            
+            const searchHtml = renderSearchSources(mockSearchResults, 'test-2');
+            document.getElementById('search-results-container').innerHTML = searchHtml;
+        }
+
+        // 测试3: 切换功能
+        function testToggleFunction() {
+            const result = document.getElementById('test3-result');
+            result.innerHTML = `
+                <h3>✅ 切换功能测试</h3>
+                <p>测试点击按钮的展开/收起功能...</p>
+                <div id="toggle-test-container"></div>
+            `;
+            
+            const searchHtml = renderSearchSources(mockSearchResults, 'test-3');
+            document.getElementById('toggle-test-container').innerHTML = searchHtml;
+        }
+
+        // 复制renderSearchSources函数（从app.js）
+        function renderSearchSources(sources, messageId = null) {
+            if (!sources || sources.length === 0) return '';
+            
+            const sourceCount = sources.length;
+            const uniqueId = messageId ? `search-${messageId}` : `search-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            
+            return `
+                <div class="search-sources-container">
+                    <button class="search-sources-toggle" onclick="toggleSearchSources('${uniqueId}')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="search-icon">
+                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                            <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <span>搜索了 ${sourceCount} 篇网页</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="chevron-icon">
+                            <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <div class="search-sources-panel" id="${uniqueId}" style="display: none;">
+                        <div class="search-sources-header">
+                            <span>参考资料 (${sourceCount})</span>
+                        </div>
+                        <div class="search-sources-list">
+                            ${sources.map((source, i) => `
+                                <a href="${source.url}" target="_blank" class="search-source-item">
+                                    <div class="source-number">${i + 1}</div>
+                                    <div class="source-content">
+                                        <div class="source-title">${escapeHtml(source.title)}</div>
+                                        <div class="source-snippet">${escapeHtml(source.snippet || '').substring(0, 120)}${source.snippet?.length > 120 ? '...' : ''}</div>
+                                    </div>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="external-icon">
+                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M15 3h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M10 14L21 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 复制toggleSearchSources函数（从app.js）
+        window.toggleSearchSources = function(id) {
+            console.log('点击搜索按钮，ID:', id);
+            
+            const panel = document.getElementById(id);
+            if (!panel) {
+                console.error('找不到搜索结果面板:', id);
+                console.log('当前页面所有ID:', Array.from(document.querySelectorAll('[id]')).map(el => el.id));
+                return;
+            }
+            
+            const button = panel.previousElementSibling;
+            const chevron = button.querySelector('.chevron-icon');
+            
+            console.log('面板当前状态:', panel.style.display);
+            
+            if (panel.style.display === 'none' || panel.style.display === '') {
+                panel.style.display = 'block';
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+                console.log('✅ 展开搜索结果');
+            } else {
+                panel.style.display = 'none';
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+                console.log('✅ 收起搜索结果');
+            }
+        }
+
+        // HTML转义函数
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+
+    <!-- 引入CSS样式 -->
+    <link rel="stylesheet" href="src/css/styles.css">
+</body>
+</html>
